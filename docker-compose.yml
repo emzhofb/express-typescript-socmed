@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    container_name: express_postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ikhda
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: lahgue
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: express_app
+    restart: always
+    environment:
+      # Forward environment variables from dev.env to container
+      - PORT=3000
+      - DB_HOST=db
+      - DB_USER=ikhda
+      - DB_PASSWORD=secret
+      - DB_NAME=lahgue
+      - DB_PORT=5432
+      - JWT_SECRET=your_jwt_secret
+    depends_on:
+      - db
+    ports:
+      - '3000:3000'
+
+volumes:
+  db_data:

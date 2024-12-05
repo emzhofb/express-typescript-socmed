@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "ikhda",
+    "password": "secret",
+    "database": "lahgue",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "ikhda",
+    "password": "secret",
+    "database": "lahgue_test",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "ikhda",
+    "password": "secret",
+    "database": "lahgue_production",
+    "host": "localhost",
+    "dialect": "postgres"
+  }
+}
