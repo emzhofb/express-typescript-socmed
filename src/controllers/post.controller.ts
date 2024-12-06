@@ -74,6 +74,9 @@ export const createPost = async (req: Request, res: Response) => {
 
 // Add the new getPost function to handle fetching a post by postId
 export const getPost = async (req: Request, res: Response) => {
+  const user = req.user as User;
+  const userId = user.id;
+
   try {
     const { postId } = req.query; // Get postId from query parameters
 
@@ -90,6 +93,15 @@ export const getPost = async (req: Request, res: Response) => {
     if (!post) {
       res.status(404).json({ message: 'Post not found' });
       return;
+    }
+
+    // Check if the post is private
+    if (post.isPrivate) {
+      // Ensure the logged-in user is the owner of the post
+      if (post.userId !== userId) {
+        res.status(403).json({ message: 'Access denied' });
+        return;
+      }
     }
 
     // If the post is found, return the post data
