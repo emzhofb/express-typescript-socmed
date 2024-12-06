@@ -1,10 +1,11 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: './src/env/.env' });
+dotenv.config({ path: './src/env/real.env' });
 
 import express, { Request, Response } from 'express';
 import sequelize from './utils/database';
 import authRoutes from './routes/auth.route';
 import postRoutes from './routes/post.route';
+import commentRoutes from './routes/comment.route';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.get('/', (req: Request, res: Response) => {
 // Routes
 app.use('/api', authRoutes);
 app.use('/api', postRoutes);
+app.use('/api', commentRoutes);
 
 // Database connection
 sequelize.sync({ force: false }).then(() => {
