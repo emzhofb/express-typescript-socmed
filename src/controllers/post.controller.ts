@@ -71,3 +71,31 @@ export const createPost = async (req: Request, res: Response) => {
     }
   });
 };
+
+// Add the new getPost function to handle fetching a post by postId
+export const getPost = async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.query; // Get postId from query parameters
+
+    // Ensure postId exists in the query
+    if (!postId || typeof postId !== 'string') {
+      res.status(400).json({ message: 'Invalid or missing postId' });
+      return;
+    }
+
+    // Find the post from the database by postId
+    const post = await Post.findByPk(postId);
+
+    // If the post is not found, return 404
+    if (!post) {
+      res.status(404).json({ message: 'Post not found' });
+      return;
+    }
+
+    // If the post is found, return the post data
+    res.status(200).json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};

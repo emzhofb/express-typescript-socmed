@@ -13,6 +13,8 @@ export class Post extends Model {
   mediaHeight!: number;
 
   isPrivate!: boolean;
+
+  userId!: number;
 }
 
 Post.init(
