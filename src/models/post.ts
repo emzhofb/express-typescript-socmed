@@ -42,6 +42,10 @@ Post.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     sequelize,

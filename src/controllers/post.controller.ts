@@ -3,8 +3,11 @@ import upload from '../utils/multer';
 import cloudinary from '../utils/cloudinary';
 import { compressImage } from '../utils/compress';
 import { Post } from '../models/post';
+import User from '../models/user';
 
 export const createPost = async (req: Request, res: Response) => {
+  const user = req.user as User;
+
   // Use Multer to handle file upload (this is where you handle the file)
   upload.single('media')(req, res, async (err) => {
     // Handle any Multer errors
@@ -57,6 +60,7 @@ export const createPost = async (req: Request, res: Response) => {
         mediaWidth,
         mediaHeight,
         isPrivate,
+        userId: user.id,
       });
 
       // Respond with the created post

@@ -1,29 +1,37 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { User } from '../models/user'; // Import your User model
 
-// Secret key used to sign the JWT token
-const SECRET_KEY = process.env.JWT_SECRET_KEY || 'your-secret-key';
+interface JwtPayload {
+  id: string; // Or whatever fields are part of your JWT
+}
 
-// Middleware to authenticate the user
-const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.split(' ')[1]; // Get the token from the 'Authorization' header (Bearer <token>)
-
+export const authenticateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
-    res
-      .status(401)
-      .json({ message: 'No token provided, authorization denied' });
+    res.status(401).json({ message: 'Authentication required' });
     return;
   }
 
   try {
-    // Verify the token
-    const decoded = jwt.verify(token, SECRET_KEY);
-    // Attach the decoded user data to the request object for use in the next middleware or route
-    req.user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const user = await User.findByPk(decoded.id); // Fetch user from DB using the ID from JWT
+
+    if (!user) {
+      res.status(401).json({ message: 'User not found' });
+      return;
+    }
+
+    // Add the user to req.user
+    req.user = user;
+
     next();
-  } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
+  } catch (error) {
+    res.status(401).json({ message: 'Invalid or expired token' });
+    return;
   }
 };
-
-export default authenticateUser;
